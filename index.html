@@ -1,1 +1,58 @@
-<h1> testing </h1>
+import React, { useState } from 'react';
+import { Checkbox } from "@/components/ui/checkbox"
+
+const documents = [
+  { id: 1, title: '文件1', content: '這是文件1的內容。\n\n它可能有多個段落。' },
+  { id: 2, title: '文件2', content: '文件2的內容在這裡。\n\n也可能包含多行。' },
+  { id: 3, title: '文件3', content: '這是第三個文件。\n\n它也有自己的格式。' },
+];
+
+export default function MultiDocumentViewer() {
+  const [selectedDocs, setSelectedDocs] = useState([]);
+
+  const handleCheckboxChange = (docId) => {
+    setSelectedDocs(prev => 
+      prev.includes(docId)
+        ? prev.filter(id => id !== docId)
+        : [...prev, docId]
+    );
+  };
+
+  return (
+    <div className="p-4 max-w-2xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">多選文件查看器</h1>
+      
+      <div className="mb-4">
+        {documents.map((doc) => (
+          <div key={doc.id} className="flex items-center space-x-2 mb-2">
+            <Checkbox
+              id={`checkbox-${doc.id}`}
+              checked={selectedDocs.includes(doc.id)}
+              onCheckedChange={() => handleCheckboxChange(doc.id)}
+            />
+            <label
+              htmlFor={`checkbox-${doc.id}`}
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              {doc.title}
+            </label>
+          </div>
+        ))}
+      </div>
+      
+      {selectedDocs.length > 0 && (
+        <div>
+          {documents
+            .filter(doc => selectedDocs.includes(doc.id))
+            .map(doc => (
+              <div key={doc.id} className="border p-4 rounded mb-4">
+                <h2 className="text-xl font-semibold mb-2">{doc.title}</h2>
+                <pre className="whitespace-pre-wrap">{doc.content}</pre>
+              </div>
+            ))
+          }
+        </div>
+      )}
+    </div>
+  );
+}
